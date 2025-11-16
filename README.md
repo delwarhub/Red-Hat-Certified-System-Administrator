@@ -5,8 +5,6 @@ Here’s a **practice-task list** built to mirror the actual style and pressure 
 
 If you can perform every task below without searching the web or notes—and repeat them quickly—you’re exam-ready.
 
----
-
 # **RHCSA-Style Practice Task List**
 
 ## **1. User & Group Administration**
@@ -23,8 +21,6 @@ If you can perform every task below without searching the web or notes—and rep
    * group members can collaborate
    * others have no access
 
----
-
 ## **2. Permissions, ACLs & SELinux**
 
 1. Apply ACLs so a specific user has read-only access to a directory.
@@ -33,8 +29,6 @@ If you can perform every task below without searching the web or notes—and rep
 4. Change the SELinux context of a directory so Apache can read it.
 5. Temporarily set SELinux to permissive, then restore enforcing mode.
 6. Restore default SELinux contexts using `restorecon`.
-
----
 
 ## **3. Storage & LVM**
 
@@ -46,16 +40,12 @@ If you can perform every task below without searching the web or notes—and rep
 6. Reduce an LVM volume safely (requires unmount + resize2fs + lvreduce if ext4).
 7. Create and activate a swap partition or swap file.
 
----
-
 ## **4. Networking**
 
 1. Set a static IP, gateway, DNS using `nmcli`.
 2. Change the hostname and ensure it persists after reboot.
 3. Create an additional network connection profile.
 4. Enable and verify network autoconnect behavior.
-
----
 
 ## **5. System Services & Boot Process**
 
@@ -66,8 +56,6 @@ If you can perform every task below without searching the web or notes—and rep
 5. Fix a broken boot caused by an incorrect `/etc/fstab` entry.
 6. Investigate service failures using `journalctl`.
 
----
-
 ## **6. Software Management**
 
 1. Configure a new software repository (local or remote).
@@ -76,8 +64,6 @@ If you can perform every task below without searching the web or notes—and rep
 4. Query which package a file belongs to.
 5. Create a simple bash script that installs a package list automatically.
 
----
-
 ## **7. Firewalld & Security**
 
 1. Open a port permanently and reload firewall rules.
@@ -85,15 +71,11 @@ If you can perform every task below without searching the web or notes—and rep
 3. Create and enable a rich rule allowing a specific IP.
 4. Configure SSH so root login is disabled and password auth is optional.
 
----
-
 ## **8. File Sharing & Transfer (often included indirectly)**
 
 1. Configure a basic **VDO volume** if your exam version includes it.
 2. Set up a simple **autofs** mount.
 3. Create a tar archive and extract it to a precise location.
-
----
 
 ## **9. Scripting (Lightweight Tasks)**
 
@@ -105,7 +87,6 @@ If you can perform every task below without searching the web or notes—and rep
 2. Write a script using conditional checks to start or stop a service.
 3. Automate the creation of 10 users from a text file.
 
----
 
 # **10. Exam-Style Comprehensive Scenarios**
 
@@ -133,4 +114,3 @@ Try combining tasks like these into a single session:
 * Fix a misconfigured service
 * Create a script that configures users and groups
 
----
