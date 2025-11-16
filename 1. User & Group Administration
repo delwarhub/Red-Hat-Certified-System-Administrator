@@ -1,9 +1,8 @@
 Below are **clear, exam-style, step-by-step solutions** for each of the seven user/group tasks you listed.
 Everything is command-level and tested for RHEL-compatible systems.
-
 ---
 
-# ✅ **1. Create a user with a specific UID**
+# **1. Create a user with a specific UID**
 
 ### **Task:** Create user `user1` with UID `12345`.
 
@@ -23,8 +22,7 @@ id user1
 You should see `uid=12345(user1)`.
 
 ---
-
-# ✅ **2. Create a group and add multiple users to it**
+# **2. Create a group and add multiple users to it**
 
 ### **Task:** Create group `projectgrp` and add users `user1`, `user2`, `user3`.
 
@@ -46,7 +44,7 @@ grep projectgrp /etc/group
 
 ---
 
-# ✅ **3. Set a password expiration policy (max days, warning days)**
+# **3. Set a password expiration policy (max days, warning days)**
 
 ### **Task:** For user `user1`, set:
 
@@ -68,7 +66,7 @@ sudo chage -l user1
 
 ---
 
-# ✅ **4. Configure a restricted shell**
+# **4. Configure a restricted shell**
 
 A restricted shell prevents the user from changing directories, running arbitrary commands, or setting environment variables.
 
@@ -114,7 +112,7 @@ Try commands like `cd` — they should fail.
 
 ---
 
-# ✅ **5. Create a user with a primary group and two secondary groups**
+# **5. Create a user with a primary group and two secondary groups**
 
 ### **Task:** Create user `devuser`
 
@@ -146,7 +144,7 @@ id devuser
 
 ---
 
-# ✅ **6. Lock and unlock user accounts**
+# **6. Lock and unlock user accounts**
 
 ### **Task:** Lock and unlock the account of `tempuser`.
 
@@ -174,7 +172,7 @@ Status will show `L` (locked) or `P` (active).
 
 ---
 
-# ✅ **7. Configure /project directory with group collaboration**
+# **7. Configure /project directory with group collaboration**
 
 ### **Task:**
 
@@ -239,24 +237,24 @@ Following that, you’ll get **verification commands for every step** so you can
 
 ---
 
-# 🔥 **RHCSA-Style Combined Scenario (User & Group Administration)**
+# **RHCSA-Style Combined Scenario (User & Group Administration)**
 
 **Complete all tasks exactly as specified. Partial configurations do not count.**
 
 ---
 
-# **🔷 Scenario**
+# **Scenario**
 
 Your company needs a project environment on a RHEL system.
 You must complete the following tasks:
 
 ---
 
-## **1️⃣ Create a group called `devteam`.**
+## **1️ Create a group called `devteam`.**
 
 ---
 
-## **2️⃣ Create the following users with specific requirements:**
+## **2️Create the following users with specific requirements:**
 
 ### **User A — `alice`**
 
@@ -282,11 +280,11 @@ You must complete the following tasks:
 
 ---
 
-## **3️⃣ Lock the account `bob` temporarily.**
+## **3️ Lock the account `bob` temporarily.**
 
 ---
 
-## **4️⃣ Create a project directory `/project` with the following rules:**
+## **4️ Create a project directory `/project` with the following rules:**
 
 * Owned by group: **devteam**
 * Group must have **full collaboration rights**
@@ -297,11 +295,11 @@ You must complete the following tasks:
 
 # -------------------------------------------------
 
-# 🚀 **Step-by-Step Commands (Full Solutions)**
+# **Step-by-Step Commands (Full Solutions)**
 
 ---
 
-# **1️⃣ Create the required groups**
+# **1️Create the required groups**
 
 ```bash
 sudo groupadd devteam
@@ -311,7 +309,7 @@ sudo groupadd docker
 
 ---
 
-# **2️⃣ Create the users**
+# **2️Create the users**
 
 ## **User A — alice**
 
@@ -363,7 +361,7 @@ echo 'PATH=$HOME/bin' | sudo tee -a /home/restricted1/.bash_profile
 
 ---
 
-# **3️⃣ Lock bob's account**
+# **3️Lock bob's account**
 
 ```bash
 sudo usermod -L bob
@@ -371,7 +369,7 @@ sudo usermod -L bob
 
 ---
 
-# **4️⃣ Create and configure `/project` directory**
+# **4️ Create and configure `/project` directory**
 
 ### Create directory
 
@@ -395,7 +393,7 @@ sudo chmod 2770 /project
 
 # -------------------------------------------------
 
-# ✅ **Verification Commands (Exactly what examiners check)**
+# **Verification Commands (Exactly what examiners check)**
 
 Use these after each task to confirm your work quickly.
 
@@ -492,6 +490,5 @@ Test permissions:
 sudo -u bob touch /project/bobfile   # should work
 sudo -u restricted1 touch /project/nope # should fail
 ```
-
 ---
 
