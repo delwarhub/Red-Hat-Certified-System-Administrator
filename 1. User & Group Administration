@@ -495,4 +495,3 @@ sudo -u restricted1 touch /project/nope # should fail
 
 ---
 
-
