@@ -1,93 +1,268 @@
-# MidPoint
+Yes. Here’s a practical way to build a **complete midPoint knowledge base** that’s actually usable in ops (not just theory). I’ll give you a ready-to-copy structure + what to write in each page + templates you can reuse.
 
+---
 
+## 1) Pick a KB tool and rules (keep it simple)
 
-## Getting started
+Use **Git + Markdown** (best for IT teams), or Confluence/Notion if your org requires it.
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+**Rules for a good midPoint KB**
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+* Every procedure = **copy-paste commands** + expected output + rollback
+* Every configuration = **file path + owner + change history**
+* Every incident = **timeline + evidence + RCA + preventive actions**
+* Always document the **data locations**: DB volume + midpoint-home + keystore
 
-## Add your files
+---
 
-* [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-* [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
+## 2) Recommended KB structure (folder/page tree)
 
+Create a repo/folder called: `midpoint-knowledge-base/`
+
+### A) 00-Overview
+
+1. **What is midPoint used for here**
+
+   * Business purpose: IAM, provisioning, sync, governance
+   * What systems it connects to (AD/LDAP, HR, apps)
+
+2. **Architecture diagram (text is OK)**
+
+   * Containers: `midpoint_server`, `midpoint_data` (Postgres)
+   * Volumes: `midpoint_data` volume, `/opt/midpoint-home` bind mount
+   * Network: internal Docker network only
+
+3. **Environments**
+
+   * dev / test / prod differences
+   * URLs, ports, access method (VPN, reverse proxy)
+
+---
+
+### B) 10-Installation-and-Configuration
+
+1. **How to deploy (Docker quickstart)**
+
+   * Where the script lives
+   * Commands: `init`, `start`, `stop`, `clean-db`
+   * How to check health: `docker ps`, `docker logs`
+
+2. **Configuration files**
+
+   * `/opt/midpoint-home/config.xml`
+   * `/opt/midpoint-home/keystore.jceks`
+   * connector dirs: `connid-connectors`, `icf-connectors`
+   * what each does, who can edit, change process
+
+3. **Database configuration**
+
+   * PostgreSQL version
+   * JDBC URL must be `jdbc:postgresql://midpoint_data:5432/midpoint`
+   * where DB data lives (Docker volume)
+
+4. **Crypto and keystore**
+
+   * why it matters (protects credentials, secrets)
+   * how to verify keystore entries
+   * key mismatch symptom (your digest error)
+   * recovery plan
+
+---
+
+### C) 20-Day-2-Operations (Runbooks)
+
+Make these the most detailed pages.
+
+1. **Start/Stop/Restart Runbook**
+
+   * restart midPoint only
+   * restart full stack
+   * restart docker daemon (last resort)
+   * verification commands
+
+2. **Logs Runbook**
+
+   * follow logs
+   * grep for common errors
+   * where logs stored on host
+
+3. **Backup & Restore Runbook (must be perfect)**
+
+   * DB dump command
+   * midpoint-home archive command
+   * integrity hashes
+   * restore steps into test environment
+   * monthly restore drill checklist
+
+4. **Upgrade Runbook**
+
+   * pre-checklist: backup + snapshot
+   * change image tag
+   * start + smoke test
+   * rollback steps
+
+5. **Monitoring & Alerts**
+
+   * what to alert on:
+
+     * container unhealthy/restarts
+     * DB not reachable
+     * “No key mapped to key digest”
+     * queue backlog/tasks stuck (if applicable)
+   * metrics endpoints / actuator path (`/actuator` is visible in logs)
+
+---
+
+### D) 30-Security
+
+1. **Access control**
+
+   * who can access GUI
+   * admin/break-glass account policy
+   * MFA or SSO (if used)
+
+2. **Secrets management**
+
+   * remove passwords from scripts/config
+   * use Docker secrets or `.env` with 600 permissions
+   * who can read secrets
+
+3. **Database security**
+
+   * DB port not exposed to host
+   * backup encryption
+   * least privilege users
+
+4. **Audit policy**
+
+   * what is audited
+   * retention
+   * where audit is stored (DB/log)
+
+---
+
+### E) 40-Integrations (Connectors & Resources)
+
+One page per integration:
+
+* HR system
+* LDAP/AD
+* Applications
+
+Each page should include:
+
+* resource definition location
+* credentials location (protected values)
+* test procedure
+* failure modes and troubleshooting
+
+---
+
+### F) 50-Troubleshooting (known issues)
+
+This is where you put the things you already faced.
+
+Example pages:
+
+* **Admin login fails: “No key mapped to key digest…”**
+
+  * cause: wrong keystore vs DB
+  * how to confirm
+  * fix: restore matching keystore + restart
+  * prevention: backup DB+keystore together
+
+* DB connection errors
+
+* Slow UI / task stuck
+
+* Connector not loading
+
+---
+
+### G) 60-Incident-Response (templates)
+
+1. **Incident report template**
+2. **Evidence collection checklist**
+3. **Post-incident review template**
+4. **Communication template**
+
+---
+
+## 3) The “must-have” templates (copy/paste)
+
+### A) Runbook template
+
+**Purpose**
+**When to use**
+**Prerequisites**
+**Procedure**
+
+* Step 1 …
+* Step 2 …
+  **Validation**
+* command + expected output
+  **Rollback**
+* exact rollback steps
+  **Notes / Links**
+
+### B) Backup SOP template
+
+* schedule
+* commands
+* where stored
+* encryption
+* retention
+* restore test proof
+
+### C) Incident report template (short)
+
+* Summary
+* Impact
+* Timeline
+* Root cause
+* Fix applied
+* Preventive actions
+* Attachments (logs, configs, hashes)
+
+---
+
+## 4) What to include from YOUR config (important)
+
+From your `config.xml`, document:
+
+* Repository type `native`
+* Correct JDBC URL (container name, not localhost)
+* Audit services enabled
+* Keystore path and alias (`default`)
+* How overrides via `MP_SET_...` env work (so you don’t debug the wrong config again)
+
+---
+
+## 5) Your fastest next step (actionable)
+
+If you want a clean start, do this on the server:
+
+```bash
+mkdir -p /opt/it-docs/midpoint-kb/{00-Overview,10-Install-Config,20-Runbooks,30-Security,40-Integrations,50-Troubleshooting,60-Incident-Response}
 ```
-cd existing_repo
-git remote add origin https://gitlab.pik-potsdam.de/delwarho/midpoint.git
-git branch -M main
-git push -uf origin main
-```
 
-## Integrate with your tools
+Then create these first 6 pages (they unlock everything):
 
-* [Set up project integrations](https://gitlab.pik-potsdam.de/delwarho/midpoint/-/settings/integrations)
+1. `00-Overview/architecture.md`
+2. `10-Install-Config/config-files.md`
+3. `20-Runbooks/start-stop-restart.md`
+4. `20-Runbooks/backup-restore.md`
+5. `30-Security/keystore-and-protected-data.md`
+6. `50-Troubleshooting/no-key-mapped-to-key-digest.md`
 
-## Collaborate with your team
+---
 
-* [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-* [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-* [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-* [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-* [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
+## If you want, I can generate the whole KB content for you
 
-## Test and Deploy
+Tell me:
 
-Use the built-in continuous integration in GitLab.
+1. Is this **dev/test/prod**?
+2. Where do you want backups stored (local disk, NAS, S3)?
+3. Do you use any connectors yet (LDAP/AD/HR)?
 
-* [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/)
-* [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-* [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-* [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-* [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
-
-***
-
-# Editing this README
-
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
-
-## Suggestions for a good README
-
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
-
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+Even without answers, I can draft the full set of markdown pages using your exact Docker setup and the issues you already hit.
